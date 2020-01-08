@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1053398896273",
+    "firebase_url": "https://young-ee36c.firebaseio.com",
+    "project_id": "young-ee36c",
+    "storage_bucket": "young-ee36c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1053398896273:android:73c5929c463733155bf930",
+        "android_client_info": {
+          "package_name": "com.example.hanium"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1053398896273-i1kag1st1nsljftcddu3ripu76fc4bt7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hanium",
+            "certificate_hash": "5661676426f4b49884bfd1c2121cb8dc07ae683d"
+          }
+        },
+        {
+          "client_id": "1053398896273-pg621qbjidvetu9q25lsop5gdquklntp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5Uk-45DaO5sMBiRQ3RkUugzowWIYQov8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1053398896273-pg621qbjidvetu9q25lsop5gdquklntp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
