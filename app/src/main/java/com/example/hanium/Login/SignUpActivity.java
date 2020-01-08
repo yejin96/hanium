@@ -1,6 +1,7 @@
 package com.example.hanium.Login;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -55,29 +56,37 @@ public class SignUpActivity extends AppCompatActivity {
                 user.put("NAME",nameEt.getText().toString());
                 user.put("Phone",phnumEt.getText().toString());
                 user.put("Email",emailEt.getText().toString());
-                db.collection("User").document(idEt.getText().toString())
-                        .set(user)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                new AlertDialog.Builder(SignUpActivity.this)
-                                        .setTitle("알림")
-                                        .setMessage("회원가입 성공")
-                                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                dialogInterface.dismiss();
-                                                finish();
-                                            }
-                                        });
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getApplicationContext(), "회원가입 실패", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+               if(pwEt.getText().toString().length()*nameEt.getText().toString().length()*phnumEt.getText().toString().length()*emailEt.getText().toString().length()<=0)
+                   Toast.makeText(SignUpActivity.this, "회원가입 실패\n모든 정보를 기입해주세요", Toast.LENGTH_SHORT).show();
+               else {
+                   db.collection("User")
+                           .document(idEt.getText().toString())
+                           .set(user)
+                           .addOnSuccessListener(new OnSuccessListener<Void>() {
+                               @Override
+                               public void onSuccess(Void aVoid) {
+                                   new AlertDialog.Builder(SignUpActivity.this)
+                                           .setTitle("알림")
+                                           .setMessage("회원가입 성공")
+                                           .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                               @Override
+                                               public void onClick(DialogInterface dialogInterface, int i) {
+                                                   dialogInterface.dismiss();
+                                                   finish();
+                                               }
+                                           })
+                                           .show();
+                                   Intent login_intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                                   startActivity(login_intent);
+                               }
+                           })
+                           .addOnFailureListener(new OnFailureListener() {
+                               @Override
+                               public void onFailure(@NonNull Exception e) {
+                                   Toast.makeText(SignUpActivity.this, "회원가입 실패\n(아이디 중복 혹은 빈칸을 채워주세요)", Toast.LENGTH_SHORT).show();
+                               }
+                           });
+               }
 
             }
         });

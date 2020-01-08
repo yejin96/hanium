@@ -19,7 +19,6 @@
         <EditText
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="root"
             android:id="@+id/login_id_Et"/>
 
     </LinearLayout>
@@ -36,7 +35,6 @@
         <EditText
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:text="root"
             android:inputType="textPassword"
             android:id="@+id/login_pw_Et"/>
     </LinearLayout>

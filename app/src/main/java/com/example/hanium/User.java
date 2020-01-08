@@ -1,12 +1,16 @@
 package com.example.hanium;
 
-import com.example.hanium.Login.DBHelper;
+import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
-import java.util.concurrent.ExecutionException;
 
 public class User implements Serializable {
     String id;
@@ -14,27 +18,27 @@ public class User implements Serializable {
     String cellphone;
     String mail;
 
-
+    FirebaseFirestore db= FirebaseFirestore.getInstance();
+    private static final String TAG = "User";
     public User(String id) {
         this.id = id;
+        db.collection("User")
+                .whereEqualTo("ID",id)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                name=document.get("NAME").toString();
+                                cellphone=document.get("Phone").toString();
+                                mail=document.get("Email").toString();
+                            }
+                        }
 
-        try {
-            JSONObject getuser = new JSONObject(new DBHelper().execute("getUser", "&id=" + id).get());
+                    }
+                });
 
-            String name = getuser.getString("name");
-            String cellphone = getuser.getString("cellphone");
-            String mail = getuser.getString("mail");
-
-            this.name = name;
-            this.cellphone = cellphone;
-            this.mail = mail;
-
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
