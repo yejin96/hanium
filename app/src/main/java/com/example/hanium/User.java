@@ -75,4 +75,7 @@ public class User implements Serializable, Parcelable {
         parcel.writeString(cellphone);
         parcel.writeString(mail);
     }
+    public String getId(){
+        return this.id;
+    }
 }

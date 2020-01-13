@@ -1,4 +1,5 @@
 package com.example.hanium.Login;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,8 +16,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.hanium.HomeActivity;
 import com.example.hanium.R;
-import com.example.hanium.STTS.STTSActivity;
 import com.example.hanium.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -63,10 +64,10 @@ public class LoginActivity extends AppCompatActivity {
                                         DocumentSnapshot document = task.getResult();
                                         if (document.exists()) {
                                             if (document.get("PW").toString().equals(pwEt.getText().toString())) {
-                                                Intent stts_intent = new Intent(LoginActivity.this, STTSActivity.class);
+                                                Intent home_intent = new Intent(LoginActivity.this, HomeActivity.class);
                                                 User user = new User(idEt.getText().toString());
-                                                stts_intent.putExtra("user",(Parcelable)user);
-                                                startActivity(stts_intent);
+                                                home_intent.putExtra("user",(Parcelable)user);
+                                                startActivity(home_intent);
                                                 Log.d(TAG, "success Login");
                                             } else {
                                                 Toast.makeText(LoginActivity.this, "로그인 실패 : 비밀번호를 확인해주세요!!!", Toast.LENGTH_SHORT).show();
@@ -126,25 +127,25 @@ public class LoginActivity extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                             if (task.isSuccessful()) {
                                                 for(QueryDocumentSnapshot document:task.getResult()) {
-                                                                alertDialog.dismiss();
-                                                                Log.d(TAG, "success find IDPW");
-                                                                new AlertDialog.Builder(LoginActivity.this)
-                                                                        .setNegativeButton("확인", new DialogInterface.OnClickListener() {
-                                                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                                                dialogInterface.dismiss();
-                                                                            }
-                                                                        })
-                                                                        .setTitle("ID / PW")
-                                                                        .setMessage("ID : " + document.getId() + "\nPW : " + document.get("PW"))
-                                                                        .show();
+                                                    alertDialog.dismiss();
+                                                    Log.d(TAG, "success find IDPW");
+                                                    new AlertDialog.Builder(LoginActivity.this)
+                                                            .setNegativeButton("확인", new DialogInterface.OnClickListener() {
+                                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                                    dialogInterface.dismiss();
+                                                                }
+                                                            })
+                                                            .setTitle("ID / PW")
+                                                            .setMessage("ID : " + document.getId() + "\nPW : " + document.get("PW"))
+                                                            .show();
 
-                                                            }
+                                                }
 
-                                                    }else {
+                                            }else {
                                                 Log.d(TAG, "Error finding IDPW ");
                                                 Toast.makeText(LoginActivity.this, "정보가 맞지 않습니다.", Toast.LENGTH_SHORT).show();
-                                                }
                                             }
+                                        }
                                     });
                         }
                     }
@@ -167,4 +168,3 @@ public class LoginActivity extends AppCompatActivity {
 
 
 }
-
