@@ -10,15 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:layout_weight="1" />
-
-
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
@@ -32,7 +23,7 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="레벨보기" />
+                android:text="목록" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
@@ -44,6 +35,22 @@
                 android:layout_height="wrap_content"
                 android:text="저장목록" />
         </com.google.android.material.tabs.TabLayout>
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:layout_weight="1">
+            <ListView
+                android:id="@+id/athome_border_listView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/roundedge"
+                android:scrollbars="none">
+            </ListView>
+    </androidx.viewpager.widget.ViewPager>
+
+
     </LinearLayout>
 
     <LinearLayout
