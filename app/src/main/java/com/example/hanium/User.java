@@ -1,5 +1,7 @@
 package com.example.hanium;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -12,7 +14,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
 
-public class User implements Serializable {
+public class User implements Serializable, Parcelable {
     String id;
     String name;
     String cellphone;
@@ -40,5 +42,37 @@ public class User implements Serializable {
                     }
                 });
 
+    }
+
+    protected User(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        cellphone = in.readString();
+        mail = in.readString();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(name);
+        parcel.writeString(cellphone);
+        parcel.writeString(mail);
     }
 }

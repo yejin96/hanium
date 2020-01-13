@@ -2,6 +2,7 @@ package com.example.hanium.Login;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -64,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
                                             if (document.get("PW").toString().equals(pwEt.getText().toString())) {
                                                 Intent stts_intent = new Intent(LoginActivity.this, STTSActivity.class);
                                                 User user = new User(idEt.getText().toString());
-                                                stts_intent.putExtra("user", user);
+                                                stts_intent.putExtra("user",(Parcelable)user);
                                                 startActivity(stts_intent);
                                                 Log.d(TAG, "success Login");
                                             } else {
