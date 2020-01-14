@@ -35,7 +35,7 @@ public class STTservice extends Service implements RecognitionListener {
         speechRecognizer.setRecognitionListener(this);
 
         intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, this.getPackageName());
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
     }
 
@@ -71,6 +71,7 @@ public class STTservice extends Service implements RecognitionListener {
 
     }
 
+
     @Override
     public void onBufferReceived(byte[] bytes) {
 
@@ -92,7 +93,8 @@ public class STTservice extends Service implements RecognitionListener {
         for (int i=0; i<results.size(); i++) {
             Log.d(TAG, "onResults: " + results.get(i));
         }
-
+        String[] st=new String[results.size()];
+        results.toArray(st);
         Intent intent = new Intent("get_stt_result");
         intent.putStringArrayListExtra("result", results);
 

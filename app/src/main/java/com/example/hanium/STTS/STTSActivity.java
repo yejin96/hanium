@@ -13,15 +13,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hanium.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,16 +31,22 @@ public class STTSActivity extends AppCompatActivity {
     /**
      * Made By LSC
      */
+    FirebaseFirestore db= FirebaseFirestore.getInstance();
     private final String TAG = "[MyLog]";
-    Button ttspeech, repeat,stt;
+    Button ttspeech,stt;
     TextView txtRead;
     TextView txtSpeech;
+
     private TextToSpeech tts;
     private boolean isAvailableToTTS = false;
-    private ArrayList<Sentence> sentences;
-    private int nowIndex = 0;
+
     private Intent STTservice;
     private MyBroadcastReceiver myBroadCastReceiver;
+
+    String date;
+    String[] s1eng=null;
+    private int nowIndex = 0;
+    private int cnt = 0;
     /**
      * FiNISH
      */
@@ -48,6 +55,28 @@ public class STTSActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stts_interface);
+        date=getIntent().getStringExtra("date");
+        db.collection("sentence").document(date)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                String s=document.get("s1eng").toString();
+                                Log.d(TAG,s);
+                                s1eng=document.get("s1eng").toString().split("\\.");
+                                cnt=s1eng.length;
+                                Log.d(TAG,"문장불러오기 성공"+cnt);
+                            } else {
+
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+
+                            }
+                        }
+                    }
+                });
 
         TedPermission.with(this)
                 .setPermissions(Manifest.permission.RECORD_AUDIO)
@@ -78,44 +107,37 @@ public class STTSActivity extends AppCompatActivity {
                 IntentFilter intentFilter = new IntentFilter();
                 intentFilter.addAction("get_stt_result");
                 registerReceiver(myBroadCastReceiver, intentFilter);
-                STTservice = new Intent(getApplicationContext(), STTservice.class);
-//                nStart =  System.currentTimeMillis();
+                STTservice = new Intent(STTSActivity.this, STTservice.class);
                 startService(STTservice);
             }
         });
+
+        ttspeech = (Button) findViewById(R.id.ttspeech);
+
+        ttspeech.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(nowIndex>=cnt)
+                    Toast.makeText(STTSActivity.this, "학습을 완료하였습니다.", Toast.LENGTH_SHORT).show();
+                else {
+                    String txt = s1eng[nowIndex];
+                    Log.d(TAG,txt);
+                    speech(txt);
+                    txtRead.setText(txt);
+                    nowIndex++;
+                }
+            }
+        });
+
         txtRead = (TextView) findViewById(R.id.txtRead);
         txtSpeech=(TextView) findViewById(R.id.sttext);
-        /**
-         * Made By LSC
-         */
-        sentences = new ArrayList<>();
-        try {
-            String result = new GetSentenceTask(this, "http://165.229.250.25:8080/haneum/index.php").execute().get();
-            try {
-                JSONObject jsonObject = new JSONObject(result);
-                JSONArray jsonArray = jsonObject.getJSONArray("result");
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    sentences.add(new Sentence(jsonArray.getJSONObject(i).getString("eng"), jsonArray.getJSONObject(i).getString("kor")));
-                    //Log.d(TAG, "onPostExecute: " + jsonArray.getJSONObject(i).getString("sen"));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        /**
-         * FiNISH
-         */
 
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int isAvailable) {
-                if (isAvailable == TextToSpeech.SUCCESS) {
+                if(isAvailable == TextToSpeech.SUCCESS) {
                     int language = tts.setLanguage(Locale.ENGLISH);
-                    if (language == TextToSpeech.LANG_MISSING_DATA || language == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    if(language == TextToSpeech.LANG_MISSING_DATA || language == TextToSpeech.LANG_NOT_SUPPORTED) {
                         Toast.makeText(STTSActivity.this, "지원되지 않는 언어입니다.", Toast.LENGTH_SHORT).show();
                         isAvailableToTTS = false;
                     } else {
@@ -124,38 +146,12 @@ public class STTSActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-        ttspeech = (Button) findViewById(R.id.ttspeech);
-
-        ttspeech.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                speech();
-            }
-        });
-        repeat = findViewById(R.id.repeat);
-        repeat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (nowIndex != 0) {
-                    nowIndex--;
-                }
-                speech();
-            }
-        });
-
-
     }
 
-    public void speech() {
+    public void speech(String message) {
         if (isAvailableToTTS) {
-            String text = sentences.get(nowIndex).getEng();
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
-            txtRead.setText(sentences.get(nowIndex).getEng());
-            nowIndex++;
+            tts.speak(message.trim(), TextToSpeech.QUEUE_FLUSH, null, null);
         }
-
     }
 
     @Override
